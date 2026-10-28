@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('ventas', function (Blueprint $table) {
+            $table->id();
+
+            // restrictOnDelete: no se puede borrar un producto/usuario con ventas
+            // registradas (se conserva el historial).
+            $table->foreignId('producto_id')
+                ->constrained('productos')
+                ->restrictOnDelete();
+
+            $table->foreignId('vendedor_id')
+                ->constrained('usuarios')
+                ->restrictOnDelete();
+
+            $table->foreignId('cliente_id')
+                ->constrained('usuarios')
+                ->restrictOnDelete();
+
+            $table->date('fecha');
+            $table->decimal('total', 10, 2);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('ventas');
+    }
+};

@@ -1,0 +1,21 @@
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        // Invitados que intentan entrar a una ruta protegida -> /login
+        $middleware->redirectGuestsTo(fn () => route('login'));
+        // Usuarios ya autenticados que visitan /login -> inicio
+        $middleware->redirectUsersTo(fn () => route('home'));
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
